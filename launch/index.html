@@ -236,18 +236,18 @@ function f(){if(!run)return;x.clearRect(0,0,W,H);for(var i=0;i<P.length;i++){var
 requestAnimationFrame(f);
 })();
 </script>
-<audio id="bgm" src="bgm.mp3" loop preload="auto" playsinline></audio>
-<script>
-(function(){var a=document.getElementById("bgm");if(!a)return;var started=false,V=.55;
-function fade(){var n=0,k=setInterval(function(){n+=40;a.volume=Math.min(V,V*n/1800);if(n>=1800)clearInterval(k)},40)}
-function start(){if(started)return;a.volume=0;var p=a.play();if(p&&p.then){p.then(function(){started=true;fade();rm()}).catch(function(){})}else{started=true;fade();rm()}}
-var ev=["pointerdown","touchend","click","keydown","wheel"];
-function rm(){ev.forEach(function(e){document.removeEventListener(e,start,true)})}
-ev.forEach(function(e){document.addEventListener(e,start,true)});
-start();
-document.addEventListener("visibilitychange",function(){if(document.hidden){if(!a.paused)a.pause()}else if(started)a.play().catch(function(){})});
-})();
-</script>
+<audio id="bgm" src="bgm.mp3" loop muted autoplay preload="auto" playsinline></audio>
+<script>(function(){var a=document.getElementById("bgm");if(!a)return;var V=.55,on=false;a.loop=true;a.muted=true;a.volume=V;
+var ev=["pointerdown","pointerup","touchstart","touchend","mousedown","mouseup","click","keydown","wheel"];
+function fade(){a.volume=0;var n=0,k=setInterval(function(){n+=40;a.volume=Math.min(V,V*n/1800);if(n>=1800)clearInterval(k)},40)}
+function unmute(){if(on)return;a.muted=false;var p=a.paused?a.play():null;var ok=function(){on=true;fade();ev.forEach(function(e){document.removeEventListener(e,unmute,true)})};
+ if(p&&p.then)p.then(ok).catch(function(){a.muted=true;a.play().catch(function(){})});else ok()}
+function boot(){var p=a.play();if(p&&p.catch)p.catch(function(){})}
+ev.forEach(function(e){document.addEventListener(e,unmute,true)});
+boot();a.addEventListener("canplay",boot);
+document.addEventListener("visibilitychange",function(){if(document.hidden){if(!a.paused)a.pause()}else a.play().catch(function(){})});
+})();</script>
+
 
 </body>
 </html>
