@@ -236,5 +236,25 @@ function f(){if(!run)return;x.clearRect(0,0,W,H);for(var i=0;i<P.length;i++){var
 requestAnimationFrame(f);
 })();
 </script>
+<audio id="bgm" src="bgm.mp3" loop preload="none"></audio>
+<button class="snd" id="snd" type="button" aria-pressed="false" aria-label="Turn background music on"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="sp" d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="sw" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="sx" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span id="sndt">Sound on</span></button>
+<style>
+.snd{position:fixed;top:max(14px,env(safe-area-inset-top));right:14px;z-index:50;display:flex;align-items:center;gap:8px;height:40px;padding:0 14px 0 12px;border-radius:40px;border:1px solid rgba(217,188,134,.55);background:rgba(14,13,11,.55);color:#D9BC86;font:600 .72rem/1 "Manrope",system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:background .3s}
+.snd:hover{background:rgba(217,188,134,.16)}.snd svg{width:20px;height:20px}
+.snd .sw{display:none}.snd.on .sw{display:inline}.snd.on .sx{display:none}
+@media (prefers-reduced-motion:reduce){.snd{transition:none}}
+</style>
+<script>
+(function(){var a=document.getElementById("bgm"),b=document.getElementById("snd"),t=document.getElementById("sndt");if(!a||!b)return;
+var want=false;try{want=localStorage.getItem("rp_snd")==="on"}catch(e){}
+function ui(on){b.classList.toggle("on",on);b.setAttribute("aria-pressed",on?"true":"false");b.setAttribute("aria-label",on?"Turn background music off":"Turn background music on");t.textContent=on?"Sound off":"Sound on"}
+function fade(to,ms){var s=a.volume,n=0,k=setInterval(function(){n+=40;a.volume=Math.max(0,Math.min(1,s+(to-s)*Math.min(1,n/ms)));if(n>=ms){clearInterval(k);if(to===0)a.pause()}},40)}
+function on(){a.volume=0;var p=a.play();if(p&&p.then)p.then(function(){ui(true);fade(.55,1600);try{localStorage.setItem("rp_snd","on")}catch(e){}}).catch(function(){ui(false)});else{ui(true);fade(.55,1600)}}
+function off(){ui(false);fade(0,500);try{localStorage.setItem("rp_snd","off")}catch(e){}}
+b.addEventListener("click",function(){a.paused?on():off()});
+if(want){var go=function(){document.removeEventListener("pointerdown",go);document.removeEventListener("keydown",go);on()};document.addEventListener("pointerdown",go,{once:true});document.addEventListener("keydown",go,{once:true});var p=a.play();if(p&&p.then)p.then(function(){a.volume=.55;ui(true)}).catch(function(){})}
+document.addEventListener("visibilitychange",function(){if(document.hidden){if(!a.paused)a.pause()}else if(b.classList.contains("on"))a.play().catch(function(){})});
+})();
+</script>
 </body>
 </html>
