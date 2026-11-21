@@ -45,5 +45,5 @@ window.SITE_CONFIG = {
   LAUNCH_NOTE: "Something beautiful is on its way. See you after Diwali.",
 
   /* "auto" = follow LAUNCH_AT (normal). "live" = open the full site to everyone now. "paused" = never show numbers. */
-  COUNTDOWN_MODE: "auto"
+  COUNTDOWN_MODE: "live"
 };
